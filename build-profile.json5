@@ -1,0 +1,49 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "material": {
+          "certpath": "C:/Users/c84381641/.ohos/config/openharmony/default_app-Museify_gcj_xLWlEn67ia19ffgyp8lfilvN4AMb-dMq1rEVcPI=.cer",
+          "storePassword": "0000001B0A3AF929F7D9AA1106B052B852A81E80F1AA123F2FAD98BD88848DAA776C1080BB91F947DAFCE7",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BE414F5BA202711975B2FB0EFDDEA9B533085EB281E2094F0E3F873AC1052682F35E69C5E07E9B7",
+          "profile": "C:/Users/c84381641/.ohos/config/openharmony/default_app-Museify_gcj_xLWlEn67ia19ffgyp8lfilvN4AMb-dMq1rEVcPI=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:/Users/c84381641/.ohos/config/openharmony/default_app-Museify_gcj_xLWlEn67ia19ffgyp8lfilvN4AMb-dMq1rEVcPI=.p12"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compileSdkVersion": 11,
+        "compatibleSdkVersion": 11,
+        "runtimeOS": "OpenHarmony",
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug",
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}
