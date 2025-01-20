@@ -1,5 +1,6 @@
 import { AccessToken, DataSource } from '../data/DataSource';
 import { Artist } from '../model/Artist';
+import hilog from '@ohos.hilog';
 
 @Entry
 @Component
@@ -16,12 +17,12 @@ struct Index {
         //Tested: working
         const res1: AccessToken = await source.requestAccessToken()
         this.access_token = res1.access_token
-        console.log('Chat Response:', JSON.stringify(res1, null, 2));
-        console.log('Chat Response:', this.access_token);
+        hilog.info(0x00, 'Chat Response:', JSON.stringify(res1, null, 2));
+        hilog.info(0x00, 'Chat Response:', this.access_token);
         const res2: Artist = await source.getArtistData(this.access_token)
-        console.log('Artist:', JSON.stringify(res2, null, 2));
+        hilog.info(0x00, 'Artist:', JSON.stringify(res2, null, 2));
       } else {
-        console.error('Failed to fetch data: HTTP Code', code);
+        hilog.error(0x00, 'Failed to fetch data: HTTP Code', code.toString());
       }
     })
   }
