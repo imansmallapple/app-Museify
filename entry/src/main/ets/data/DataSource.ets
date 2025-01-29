@@ -1,16 +1,20 @@
 import http from '@ohos.net.http';
 import { BusinessError } from '@ohos.base';
 import { Artist } from '../model/Artist';
+import { Track } from '../model/Track'
+import { UserProfile } from '../model/UserProfile'
+import { UserAuthorizeAccepted, UserAuthorizeDenied } from '../model/UserAuthorization';
 
 const BASE_URL = "https://accounts.spotify.com"
-
+let state:string = '1234567890123456';
+const scope:string = 'user-read-private user-read-email';
 const requestToken = BASE_URL + "/api/token"
 
 const getArtistData = BASE_URL + 'v1/artists/4Z8W4fKeB5YxbusRsdQVPb'
 
 const client_id = "3b890116acda47138418a110a37334bd"
-const client_secret = "db08fe193213403bbab5dcd264abf1f6"
-
+const client_secret = "client secret"
+const redirect_uri = "https://developer.spotify.com/"
 
 class AccessToken {
   access_token!: string
@@ -19,7 +23,6 @@ class AccessToken {
 }
 
 class DataSource {
-
   constructor() {
   }
 
@@ -59,6 +62,7 @@ class DataSource {
 
   async getArtistData(access_token: string): Promise<Artist> {
 
+    // todo: Replace url with changable id
     // let access_token: string = (await this.requestAccessToken()).access_token
 
     return new Promise<Artist>((resolve, reject) => {
@@ -109,6 +113,136 @@ class DataSource {
       console.error('Error fetching HTTP code:', error);
       return -1;
     }
+  }
+
+  async getTrack(access_token: string): Promise<Track> {
+    // todo: Replace url with changable id
+    return new Promise<Track>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request("https://api.spotify.com/v1/tracks/11dFghVXANMlKmJXsNCbNl?market=PL",
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            Authorization: `Bearer ${access_token}`
+          },
+          expectDataType: http.HttpDataType.STRING,
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            try {
+              let responseData: Track = JSON.parse(data.result as string)
+              resolve(responseData)
+            } catch (error) {
+              reject('Failed to parse response data')
+            }
+            finally {
+              httpRequest.off('headersReceive');
+              httpRequest.destroy();
+            }
+          } else {
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
+
+  //todo: to fullfilled method
+  async userAuthrize(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request('https://accounts.spotify.com/authorize',
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            'client_id': client_id
+          },
+          expectDataType: http.HttpDataType.STRING,
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            try {
+              let responseData: string = JSON.parse(data.result as string)
+              resolve(responseData)
+            } catch (error) {
+              reject('Failed to parse response data')
+            }
+            finally {
+              httpRequest.off('headersReceive');
+              httpRequest.destroy();
+            }
+          } else {
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
+
+  async getProfile(access_token: string): Promise<UserProfile> {
+    // todo: Replace url with changable id
+    return new Promise<UserProfile>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request("https://api.spotify.com/v1/me",
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            Authorization: `Bearer ${access_token}`
+          },
+          expectDataType: http.HttpDataType.STRING,
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            try {
+              let responseData: UserProfile = JSON.parse(data.result as string)
+              resolve(responseData)
+            } catch (error) {
+              reject('Failed to parse response data')
+            }
+            finally {
+              httpRequest.off('headersReceive');
+              httpRequest.destroy();
+            }
+          } else {
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
+
+  async login(): Promise<UserAuthorizeAccepted|UserAuthorizeDenied> {
+    return new Promise<UserAuthorizeAccepted|UserAuthorizeDenied>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request("https://accounts.spotify.com/authorize?" +
+      JSON.stringify({
+        response_type: 'code',
+        client_id: client_id,
+        scope: scope,
+        redirect_uri: redirect_uri,
+        state: state
+      })
+        ,
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            try {
+              let responseData: UserAuthorizeAccepted|UserAuthorizeDenied = JSON.parse(data.result as string)
+              resolve(responseData)
+            } catch (error) {
+              reject('Failed to parse response data')
+            }
+            finally {
+              httpRequest.off('headersReceive');
+              httpRequest.destroy();
+            }
+          } else {
+            reject('Error: ' + err)
+          }
+        })
+    })
   }
 }
 
