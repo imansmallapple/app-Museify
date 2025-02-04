@@ -4,13 +4,13 @@
       {
         "name": "default",
         "material": {
-          "certpath": "C:/Users/c84381641/.ohos/config/openharmony/default_app-Museify_gcj_xLWlEn67ia19ffgyp8lfilvN4AMb-dMq1rEVcPI=.cer",
-          "storePassword": "0000001B0A3AF929F7D9AA1106B052B852A81E80F1AA123F2FAD98BD88848DAA776C1080BB91F947DAFCE7",
+          "certpath": "C:/Users/chens/.ohos/config/openharmony/default_app-Museify_brGInGh520Ua8VZtaDNpJnGiI4MYGNTeJ3f-T710Yuc=.cer",
+          "storePassword": "0000001B51184E1139CBD24270CFD7E6A08EF812CDA2B3F36280539E2E479E544A78F3BE5D5D1BFA97A2A4",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BE414F5BA202711975B2FB0EFDDEA9B533085EB281E2094F0E3F873AC1052682F35E69C5E07E9B7",
-          "profile": "C:/Users/c84381641/.ohos/config/openharmony/default_app-Museify_gcj_xLWlEn67ia19ffgyp8lfilvN4AMb-dMq1rEVcPI=.p7b",
+          "keyPassword": "0000001B16ECD955EB2A1B09D04D7B23DB8A3266EABE7DD0367E28E0D127CCE7B68C8FB7717F72DFDE8513",
+          "profile": "C:/Users/chens/.ohos/config/openharmony/default_app-Museify_brGInGh520Ua8VZtaDNpJnGiI4MYGNTeJ3f-T710Yuc=.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "C:/Users/c84381641/.ohos/config/openharmony/default_app-Museify_gcj_xLWlEn67ia19ffgyp8lfilvN4AMb-dMq1rEVcPI=.p12"
+          "storeFile": "C:/Users/chens/.ohos/config/openharmony/default_app-Museify_brGInGh520Ua8VZtaDNpJnGiI4MYGNTeJ3f-T710Yuc=.p12"
         }
       }
     ],

@@ -4,10 +4,11 @@ import { Artist } from '../model/Artist';
 import { Track } from '../model/Track'
 import { UserProfile } from '../model/UserProfile'
 import { UserAuthorizeAccepted, UserAuthorizeDenied } from '../model/UserAuthorization';
+import { Log } from '../utils/Log';
 
 const BASE_URL = "https://accounts.spotify.com"
-let state:string = '1234567890123456';
-const scope:string = 'user-read-private user-read-email';
+let state: string = '1234567890123456';
+const scope: string = 'user-read-private user-read-email';
 const requestToken = BASE_URL + "/api/token"
 
 const getArtistData = BASE_URL + 'v1/artists/4Z8W4fKeB5YxbusRsdQVPb'
@@ -191,7 +192,6 @@ class DataSource {
           header: {
             Authorization: `Bearer ${access_token}`
           },
-          expectDataType: http.HttpDataType.STRING,
           readTimeout: 30000,
           connectTimeout: 30000,
         },
@@ -199,8 +199,10 @@ class DataSource {
           if (!err) {
             try {
               let responseData: UserProfile = JSON.parse(data.result as string)
+              Log.info('User Profile', responseData)
               resolve(responseData)
             } catch (error) {
+              Log.error('User Profile', error)
               reject('Failed to parse response data')
             }
             finally {
@@ -208,14 +210,15 @@ class DataSource {
               httpRequest.destroy();
             }
           } else {
+            Log.error('User Profile', err.message)
             reject('Error: ' + err)
           }
         })
     })
   }
 
-  async login(): Promise<UserAuthorizeAccepted|UserAuthorizeDenied> {
-    return new Promise<UserAuthorizeAccepted|UserAuthorizeDenied>((resolve, reject) => {
+  async login(): Promise<UserAuthorizeAccepted | UserAuthorizeDenied> {
+    return new Promise<UserAuthorizeAccepted | UserAuthorizeDenied>((resolve, reject) => {
       let httpRequest = http.createHttp()
       httpRequest.request("https://accounts.spotify.com/authorize?" +
       JSON.stringify({
@@ -229,7 +232,7 @@ class DataSource {
         (err: BusinessError, data: http.HttpResponse) => {
           if (!err) {
             try {
-              let responseData: UserAuthorizeAccepted|UserAuthorizeDenied = JSON.parse(data.result as string)
+              let responseData: UserAuthorizeAccepted | UserAuthorizeDenied = JSON.parse(data.result as string)
               resolve(responseData)
             } catch (error) {
               reject('Failed to parse response data')

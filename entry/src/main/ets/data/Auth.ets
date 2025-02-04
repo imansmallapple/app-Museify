@@ -3,13 +3,10 @@ import { BusinessError } from '@ohos.base';
 import { URLSearchParams, SpotifyTokenResponse } from '../model/UserAuthorization';
 import hilog from '@ohos.hilog';
 import { Log } from '../utils/Log';
-<<<<<<< HEAD
 import webview from '@ohos.web.webview';
 import util from '@ohos.util';
 
 let base64 = new util.Base64Helper();
-=======
->>>>>>> 648390f708f80df6b776fd1dae01d7b17a035f84
 
 export class SpotifyAuth {
   private clientId: string = '3b890116acda47138418a110a37334bd';
@@ -23,21 +20,10 @@ export class SpotifyAuth {
   }
 
   // Function to initiate the login process
-<<<<<<< HEAD
   public async login(): Promise<string> {
     const authUrl = this.buildAuthUrl()
     // Log.info('Auth', 'Redirecting to:', authUrl)
-    this.handleCallback()
     return authUrl
-=======
-  public async login(): Promise<void> {
-    const authUrl = this.buildAuthUrl();
-    Log.info('Auth', 'Redirecting to:', authUrl);
-
-    // Simulate opening the URL in a browser
-    // You would typically use a web view or redirect mechanism in an actual app
-    // Here we only log it for demonstration
->>>>>>> 648390f708f80df6b776fd1dae01d7b17a035f84
   }
 
   // Build the authorization URL
@@ -53,9 +39,8 @@ export class SpotifyAuth {
   }
 
   // Handle the callback from Spotify (exchange the code for a token)
-  public async handleCallback(): Promise<void> {
-    let authCode: string = 'AQBek5pm-0RmTrPluYzO9SxIINWX9qa9icHwpq4cHmcrl3yTYNL8JR3uH_T9CDNj3s0I6IR2RU5xLZQF4hw44YPfSbOpt5Z4A64nYactzO6vbbGWV6vGsfiz-YTkFHyL8_g9Lpq_s6gz-B5KnqfRCnTsQzBB5ZiEf7LGtmxE0IzpVyiLE2IKBtv5svL8-2dwjNHFTClty4ZB4RjGxsFXUadBt-WFJQ'
-    return new Promise<void>((resolve, reject) => {
+  public async getAccessToken(authCode: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
       let httpRequest = http.createHttp();
 
       httpRequest.request(
@@ -72,18 +57,15 @@ export class SpotifyAuth {
           if (!err) {
             try {
               const response: SpotifyTokenResponse = JSON.parse(data.result as string);
-<<<<<<< HEAD
-              Log.info('handle callback', 'Access Token:', response);
-=======
-              console.info('Access Token:', response.access_token);
->>>>>>> 648390f708f80df6b776fd1dae01d7b17a035f84
-              resolve();
+              // Log.info('getAccessToken', 'Access Token:', response);
+              // console.info('getAccessToken:', response.access_token);
+              resolve(response.access_token);
             } catch (error) {
-              Log.error('handle callback', 'Failed to parse token response:', error);
+              Log.error('getAccessToken', 'Failed to parse token response:', error);
               reject(error);
             }
           } else {
-            Log.error('handle callback', 'Error during token request:', err);
+            Log.error('getAccessToken', 'Error during token request:', err);
             reject(err);
           }
         }
