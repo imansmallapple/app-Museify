@@ -1,10 +1,9 @@
 import { AccessToken, DataSource } from '../data/DataSource';
-import { Artist } from '../model/Artist';
 import hilog from '@ohos.hilog';
-import { Track } from '../model/Track'
-import { UserProfile } from '../model/UserProfile';
 import { UserAuthorizeAccepted, UserAuthorizeDenied } from '../model/UserAuthorization';
 import { SpotifyAuth } from '../data/Auth'
+import webview from '@ohos.web.webview';
+import { Log } from '../utils/Log';
 
 @Entry
 @Component
@@ -14,10 +13,17 @@ struct Index {
   @State access_token: string = ''
   @State token: string = ''
   @State authroizeResult: UserAuthorizeDenied | UserAuthorizeAccepted = new UserAuthorizeAccepted('', '')
+  @State loginUrl: string = ''
+  private controller: WebviewController = new webview.WebviewController()
 
   aboutToAppear() {
     const spotifyAuth = new SpotifyAuth();
-    spotifyAuth.login();
+
+    spotifyAuth.login().then(async (authUrl) => {
+      Log.info('Auth', 'AuthUrl:', authUrl)
+      this.loginUrl = authUrl
+    })
+
 
     const source = new DataSource()
     source.fetchHttpCode().then(async (code) => {
@@ -46,9 +52,26 @@ struct Index {
   build() {
     Row() {
       Column() {
-        Text(this.message)
-          .fontSize(50)
-          .fontWeight(FontWeight.Bold)
+        Web({ src: this.loginUrl, controller: this.controller })
+          .width('100%')
+          .height('110%')
+          .padding({ bottom: 56 })
+          .javaScriptAccess(true)
+          .fileAccess(true)
+          .domStorageAccess(true)
+          .zoomAccess(true)
+          .onLoadIntercept((event) => {
+            if (event) {
+              if (event.data.isRedirect()) {
+                // todo: 设置拦截代码，拦截重定向后的登陆code和state
+                Log.info('auth', 'redirect', event.data.getRequestUrl())
+              } else {
+                Log.info('auth', 'simple page jumping', event.data.getRequestUrl())
+              }
+            }
+            return false
+          })
+
       }
       .width('100%')
     }

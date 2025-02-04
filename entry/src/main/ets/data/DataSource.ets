@@ -13,7 +13,7 @@ const requestToken = BASE_URL + "/api/token"
 const getArtistData = BASE_URL + 'v1/artists/4Z8W4fKeB5YxbusRsdQVPb'
 
 const client_id = "3b890116acda47138418a110a37334bd"
-const client_secret = "client secret"
+const client_secret = "db08fe193213403bbab5dcd264abf1f6"
 const redirect_uri = "https://developer.spotify.com/"
 
 class AccessToken {
