@@ -199,7 +199,7 @@ class DataSource {
           if (!err) {
             try {
               let responseData: UserProfile = JSON.parse(data.result as string)
-              Log.info('User Profile', responseData)
+              Log.info('User Profile', 'responseData', responseData)
               resolve(responseData)
             } catch (error) {
               Log.error('User Profile', error)
