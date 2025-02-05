@@ -2,7 +2,7 @@ import http from '@ohos.net.http';
 import { BusinessError } from '@ohos.base';
 import { Artist } from '../model/Artist';
 import { Track } from '../model/Track'
-import { UserProfile } from '../model/UserProfile'
+import { CurrentUserProfile, PublicUserProfile } from '../model/UserProfile'
 import { UserAuthorizeAccepted, UserAuthorizeDenied } from '../model/UserAuthorization';
 import { Log } from '../utils/Log';
 import { TopItems } from '../model/UserTopItem';
@@ -151,41 +151,8 @@ class DataSource {
     })
   }
 
-  // //todo: to fullfilled method
-  // async userAuthrize(): Promise<string> {
-  //   return new Promise<string>((resolve, reject) => {
-  //     let httpRequest = http.createHttp()
-  //     httpRequest.request('https://accounts.spotify.com/authorize',
-  //       {
-  //         method: http.RequestMethod.GET,
-  //         header: {
-  //           'client_id': client_id
-  //         },
-  //         expectDataType: http.HttpDataType.STRING,
-  //         readTimeout: 30000,
-  //         connectTimeout: 30000,
-  //       },
-  //       (err: BusinessError, data: http.HttpResponse) => {
-  //         if (!err) {
-  //           try {
-  //             let responseData: string = JSON.parse(data.result as string)
-  //             resolve(responseData)
-  //           } catch (error) {
-  //             reject('Failed to parse response data')
-  //           }
-  //           finally {
-  //             httpRequest.off('headersReceive');
-  //             httpRequest.destroy();
-  //           }
-  //         } else {
-  //           reject('Error: ' + err)
-  //         }
-  //       })
-  //   })
-  // }
-
-  async getProfile(access_token: string): Promise<UserProfile> {
-    return new Promise<UserProfile>((resolve, reject) => {
+  async getCurrentUserProfile(access_token: string): Promise<CurrentUserProfile> {
+    return new Promise<CurrentUserProfile>((resolve, reject) => {
       let httpRequest = http.createHttp()
       httpRequest.request("https://api.spotify.com/v1/me",
         {
@@ -199,7 +166,7 @@ class DataSource {
         (err: BusinessError, data: http.HttpResponse) => {
           if (!err) {
             try {
-              let responseData: UserProfile = JSON.parse(data.result as string)
+              let responseData: CurrentUserProfile = JSON.parse(data.result as string)
               Log.info('User Profile', 'responseData', responseData)
               resolve(responseData)
             } catch (error) {
@@ -282,6 +249,41 @@ class DataSource {
         })
     })
   }
+
+  async getPublicUserProfile(access_token: string, user_id: string): Promise<PublicUserProfile> {
+    return new Promise<PublicUserProfile>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(api_url + `/users/${user_id}`,
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            Authorization: `Bearer ${access_token}`
+          },
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            try {
+              let responseData: PublicUserProfile = JSON.parse(data.result as string)
+              Log.info('User Top Items', 'responseData', responseData)
+              resolve(responseData)
+            } catch (error) {
+              Log.error('User Top Items', error)
+              reject('Failed to parse response data')
+            }
+            finally {
+              httpRequest.off('headersReceive');
+              httpRequest.destroy();
+            }
+          } else {
+            Log.error('User Top Items', err.message)
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
+
 }
 
 

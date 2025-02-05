@@ -5,7 +5,7 @@ import { SpotifyAuth } from '../data/Auth'
 import webview from '@ohos.web.webview';
 import { Log } from '../utils/Log';
 import url from '@ohos.url';
-import { ExplicitContent, UserProfile, ExternalUrls, Followers } from '../model/UserProfile';
+import { ExplicitContent, CurrentUserProfile, ExternalUrls, Followers, PublicUserProfile } from '../model/UserProfile';
 import router from '@ohos.router'
 import { Profile } from './userProfile';
 import { TopItems } from '../model/UserTopItem';
@@ -23,12 +23,14 @@ struct Index {
   @State authCode: string | null = ''
   private spotifyAuth = new SpotifyAuth()
   private source = new DataSource()
-  @State currentUser: UserProfile = new UserProfile('', '', '', new ExplicitContent(false, false),
+  @State currentUser: CurrentUserProfile = new CurrentUserProfile('', '', '', new ExplicitContent(false, false),
     new ExternalUrls(''), new Followers('', 0), '', '', [], '', '', '')
   @State isLogged: boolean = false
-
   // User Top Items
-  @State userTopItems: TopItems = new TopItems('',0,'',0,'',0,[])
+  @State userTopItems: TopItems = new TopItems('', 0, '', 0, '', 0, [])
+  // Public User Profile
+  @State publicUserProfile: PublicUserProfile = new PublicUserProfile('', new ExternalUrls(''), new Followers('', 0),
+    '', '', [], '')
 
   aboutToAppear() {
     this.spotifyAuth.login().then(async (authUrl) => {
@@ -75,10 +77,10 @@ struct Index {
       }
       Log.info('getAccessToken', this.access_token)
       // Get User Profile
-      let res: UserProfile = await this.source.getProfile(this.access_token)
-      Log.info('User Profile:', 'res', res)
+      let res: CurrentUserProfile = await this.source.getCurrentUserProfile(this.access_token)
+      // Log.info('User Profile:', 'res', res)
       this.currentUser = res
-      Log.info('User Profile:', 'currentUser', this.currentUser)
+      // Log.info('User Profile:', 'currentUser', this.currentUser)
       this.isLogged = true
     })
   }
@@ -91,9 +93,23 @@ struct Index {
       }
       // Get User Top Items
       let userTopItems: TopItems = await this.source.getUserTopItems(this.access_token, 'artists')
-      Log.info('User Top Items', userTopItems)
+      // Log.info('User Top Items', userTopItems)
       this.userTopItems = userTopItems
-      Log.info('User Top Items','state locally', this.userTopItems)
+      // Log.info('User Top Items', 'state locally', this.userTopItems)
+    })
+  }
+
+  getPublicUserProfile(authCode: string, user_id: string) {
+    // Get access_token
+    this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
+      if (AccessToken !== undefined) {
+        this.access_token = AccessToken
+      }
+      // Get Public User Profile
+      let dstUser: PublicUserProfile = await this.source.getPublicUserProfile(this.access_token, user_id)
+      // Log.info('User Public profile', 'test temp', dstUser)
+      this.publicUserProfile = dstUser
+      // Log.info('User Public profile', 'test local', this.publicUserProfile)
     })
   }
 
@@ -122,6 +138,9 @@ struct Index {
                     // Get User Data
                     this.getUserProfile(this.authCode)
                     this.getUserTopItems(this.authCode)
+
+                    // Test Get Public User Profile
+                    this.getPublicUserProfile(this.authCode, 'taylorswift')
                   }
                 } else {
                   Log.info('auth', 'simple page jumping', event.data.getRequestUrl())

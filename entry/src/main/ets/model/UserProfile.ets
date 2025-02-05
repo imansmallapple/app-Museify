@@ -1,3 +1,5 @@
+import image from '@ohos.multimedia.image';
+
 export class ExplicitContent {
   filterEnabled: boolean;
   filterLocked: boolean;
@@ -38,19 +40,19 @@ export class Image {
   }
 }
 
-export class UserProfile {
-  country: string;
-  display_name: string;
-  email: string;
-  explicit_content: ExplicitContent;
-  external_urls: ExternalUrls;
-  followers: Followers;
-  href: string;
-  id: string;
-  images: Image[];
-  product: string;
-  type: string;
-  uri: string;
+export class CurrentUserProfile {
+  country: string
+  display_name: string
+  email: string
+  explicit_content: ExplicitContent
+  external_urls: ExternalUrls
+  followers: Followers
+  href: string
+  id: string
+  images: Image[]
+  product: string
+  type: string
+  uri: string
 
   constructor(
     country: string,
@@ -78,5 +80,26 @@ export class UserProfile {
     this.product = product;
     this.type = type;
     this.uri = uri;
+  }
+}
+
+export class PublicUserProfile {
+  display_name: string | null
+  external_urls: ExternalUrls
+  followers: Followers
+  href: string
+  id: string
+  images: Image[]
+  type: string = 'user'
+  uri: string
+
+  constructor(displayName: string | null, external_urls: ExternalUrls, followers: Followers, href: string, id: string, images: Image[], uri: string) {
+    this.display_name = displayName
+    this.external_urls = external_urls
+    this.followers = followers
+    this.href = href
+    this.id = id
+    this.images = images
+    this.uri = uri
   }
 }

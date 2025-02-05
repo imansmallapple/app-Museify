@@ -1,9 +1,9 @@
-import { UserProfile } from '../model/UserProfile'
+import { CurrentUserProfile } from '../model/UserProfile'
 
 @Preview
 @Component
 export struct Profile {
-  // @Link currentUser: UserProfile
+  // @Link currentUser: CurrentUserProfile
 
   build() {
     Column() {
