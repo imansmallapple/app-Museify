@@ -381,6 +381,39 @@ class DataSource {
         })
     })
   }
+
+  async followArtistsOrUsers(access_token: string, type: string, ids: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(api_url + '/me/following' + `?type=${type}&ids=${ids}`,
+        {
+          method: http.RequestMethod.PUT,
+          header: {
+            Authorization: `Bearer ${access_token}`,
+            'Content-Type': 'application/json'
+          },
+          extraData: JSON.stringify({ ids: ['string'] }),
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            Log.info('Follow Artist or User', 'responseCode', data.responseCode);
+            if (data.responseCode === 204) {
+              Log.info('Follow Artist or User', 'Successfully followed Artist or User');
+              resolve(true)
+            } else {
+              Log.error('Follow Artist or User', `Unexpected response: ${data.responseCode}`);
+              reject(`Unexpected response: ${data.responseCode}`);
+            }
+          }
+          else {
+            Log.error('Follow Artist or User', err.message)
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
 }
 
 // 调用函数执行请求
