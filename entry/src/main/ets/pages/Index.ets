@@ -9,6 +9,7 @@ import { ExplicitContent, CurrentUserProfile, ExternalUrls, Followers, PublicUse
 import router from '@ohos.router'
 import { Profile } from './userProfile';
 import { TopItems } from '../model/UserTopItem';
+import { FollowedArtists } from '../model/Artist';
 
 @Entry
 @Component
@@ -119,7 +120,7 @@ struct Index {
       if (AccessToken !== undefined) {
         this.access_token = AccessToken
       }
-      // Get Public User Profile
+      // Follow playlist
       let addResult: boolean = await this.source.followPlaylist(this.access_token, playlist_id)
       Log.info('Follow Playlist', 'test temp', addResult)
     })
@@ -131,9 +132,21 @@ struct Index {
       if (AccessToken !== undefined) {
         this.access_token = AccessToken
       }
-      // Get Public User Profile
+      // Unfollow playlist
       let removeResult: boolean = await this.source.unfollowPlaylist(this.access_token, playlist_id)
       Log.info('Unfollow Playlist', 'test temp', removeResult)
+    })
+  }
+
+  getFollowedArtists(authCode: string) {
+    // Get access_token
+    this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
+      if (AccessToken !== undefined) {
+        this.access_token = AccessToken
+      }
+      // Get Public User Profile
+      let followedArtists: FollowedArtists = await this.source.getFollowedArtists(this.access_token)
+      Log.info('User Followed Artists', 'test temp', followedArtists)
     })
   }
 
@@ -168,8 +181,11 @@ struct Index {
                     // this.getPublicUserProfile(this.authCode, 'taylorswift')
                     //
                     // // Test add follow list
-                    this.unfollowList(this.authCode, '3cEYpjA9oz9GiPac4AsH4n')
+                    // this.unfollowList(this.authCode, '3cEYpjA9oz9GiPac4AsH4n')
 
+                    // this.getFollowedArtists(this.authCode)
+
+                    
                   }
                 } else {
                   Log.info('auth', 'simple page jumping', event.data.getRequestUrl())

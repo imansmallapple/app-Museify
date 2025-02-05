@@ -13,6 +13,7 @@ export class SpotifyAuth {
   private redirectUri: string = 'https://developer.spotify.com/' // Replace with your redirect URI
   private scope: string = 'user-read-private user-read-email user-top-read' +
     ' playlist-modify-public' + ' playlist-modify-private'
+  + ' user-follow-read'
   private state: string = this.generateRandomState();
 
   // Function to generate a random state string
@@ -23,8 +24,8 @@ export class SpotifyAuth {
   // Function to initiate the login process
   public async login(): Promise<string> {
     const authUrl = this.buildAuthUrl()
-    Log.info('Authe', 'in login authurl:', authUrl)
-    Log.info('Authe', 'Encode URI Component:', encodeURIComponent(this.scope))
+    Log.info('Auth', 'in login authUrl:', authUrl)
+    Log.info('Auth', 'Encode URI Component:', encodeURIComponent(this.scope))
     return authUrl
   }
 

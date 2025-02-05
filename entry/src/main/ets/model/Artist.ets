@@ -64,3 +64,31 @@ export class Artist {
     this.uri = uri;
   }
 }
+
+export class FollowedArtists {
+  href: string
+  limit: number
+  next: string
+  cursors: Cursors
+  total: number
+  items: Artist[]
+
+  constructor(href: string, limit: number, next: string, cursors: Cursors, total: number, items: Artist[]) {
+    this.href = href
+    this.limit = limit
+    this.next = next
+    this.cursors = cursors
+    this.total = total
+    this.items = items
+  }
+}
+
+export class Cursors {
+  after: string
+  before: string
+
+  constructor(after: string, before: string) {
+    this.after = after
+    this.before = before
+  }
+}

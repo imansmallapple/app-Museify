@@ -1,6 +1,6 @@
 import http from '@ohos.net.http';
 import { BusinessError } from '@ohos.base';
-import { Artist } from '../model/Artist';
+import { Artist, FollowedArtists } from '../model/Artist';
 import { Track } from '../model/Track'
 import { CurrentUserProfile, PublicUserProfile } from '../model/UserProfile'
 import { UserAuthorizeAccepted, UserAuthorizeDenied } from '../model/UserAuthorization';
@@ -341,6 +341,41 @@ class DataSource {
           }
           else {
             Log.error('Follow Playlist', err.message)
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
+
+  async getFollowedArtists(access_token: string): Promise<FollowedArtists> {
+    return new Promise<FollowedArtists>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(api_url + '/me/following?type=artist',
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            Authorization: `Bearer ${access_token}`,
+          },
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            try {
+              let responseData: FollowedArtists = JSON.parse(data.result as string)
+              Log.info('User Followed Artists', 'responseData', responseData)
+              resolve(responseData)
+            } catch (error) {
+              Log.error('User Followed Artists', error)
+              reject('Failed to parse response data')
+            }
+            finally {
+              httpRequest.off('headersReceive');
+              httpRequest.destroy();
+            }
+          }
+          else {
+            Log.error('User Followed Artists', err.message)
             reject('Error: ' + err)
           }
         })
