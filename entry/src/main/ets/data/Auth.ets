@@ -9,9 +9,10 @@ import util from '@ohos.util';
 let base64 = new util.Base64Helper();
 
 export class SpotifyAuth {
-  private clientId: string = '3b890116acda47138418a110a37334bd';
-  private redirectUri: string = 'https://developer.spotify.com/'; // Replace with your redirect URI
-  private scope: string = 'user-read-private user-read-email user-top-read';
+  private clientId: string = '3b890116acda47138418a110a37334bd'
+  private redirectUri: string = 'https://developer.spotify.com/' // Replace with your redirect URI
+  private scope: string = 'user-read-private user-read-email user-top-read' +
+    ' playlist-modify-public' + ' playlist-modify-private'
   private state: string = this.generateRandomState();
 
   // Function to generate a random state string
@@ -22,8 +23,8 @@ export class SpotifyAuth {
   // Function to initiate the login process
   public async login(): Promise<string> {
     const authUrl = this.buildAuthUrl()
-    Log.info('Auth', 'Redirecting to:', authUrl)
-    Log.info('Auth', 'Encode URI Component:', encodeURIComponent(this.scope))
+    Log.info('Authe', 'in login authurl:', authUrl)
+    Log.info('Authe', 'Encode URI Component:', encodeURIComponent(this.scope))
     return authUrl
   }
 

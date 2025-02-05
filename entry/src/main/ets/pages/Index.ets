@@ -113,6 +113,18 @@ struct Index {
     })
   }
 
+  addFollowList(authCode: string, playlist_id: string){
+    // Get access_token
+    this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
+      if (AccessToken !== undefined) {
+        this.access_token = AccessToken
+      }
+      // Get Public User Profile
+      let addResult: boolean = await this.source.addFollowPlaylist(this.access_token, playlist_id)
+      Log.info('Follow Playlist', 'test temp', addResult)
+    })
+  }
+
   build() {
     Row() {
       if (!this.isLogged) {
@@ -139,8 +151,13 @@ struct Index {
                     this.getUserProfile(this.authCode)
                     this.getUserTopItems(this.authCode)
 
-                    // Test Get Public User Profile
-                    this.getPublicUserProfile(this.authCode, 'taylorswift')
+                    // Tested: working
+                    // // Test Get Public User Profile
+                    // this.getPublicUserProfile(this.authCode, 'taylorswift')
+                    //
+                    // // Test add follow list
+                    // this.addFollowList(this.authCode, '3cEYpjA9oz9GiPac4AsH4n')
+                    
                   }
                 } else {
                   Log.info('auth', 'simple page jumping', event.data.getRequestUrl())

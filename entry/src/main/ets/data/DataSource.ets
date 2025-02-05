@@ -284,8 +284,39 @@ class DataSource {
     })
   }
 
+  async addFollowPlaylist(access_token: string, playlist_id: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(api_url + `/playlists/${playlist_id}/followers`,
+        {
+          method: http.RequestMethod.PUT,
+          header: {
+            Authorization: `Bearer ${access_token}`,
+            'Content-Type': 'application/json'
+          },
+          extraData: JSON.stringify({ public: false }),
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            Log.info('Follow Playlist', 'responseCode', data.responseCode);
+            if (data.responseCode === 200) {
+              Log.info('Follow Playlist', 'Successfully followed playlist');
+              resolve(true)
+            } else {
+              Log.error('Follow Playlist', `Unexpected response: ${data.responseCode}`);
+              reject(`Unexpected response: ${data.responseCode}`);
+            }
+          }
+          else {
+            Log.error('Follow Playlist', err.message)
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
 }
-
 
 // 调用函数执行请求
 export { DataSource, AccessToken }
