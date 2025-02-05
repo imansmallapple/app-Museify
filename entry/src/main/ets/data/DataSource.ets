@@ -284,7 +284,7 @@ class DataSource {
     })
   }
 
-  async addFollowPlaylist(access_token: string, playlist_id: string): Promise<boolean> {
+  async followPlaylist(access_token: string, playlist_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       let httpRequest = http.createHttp()
       httpRequest.request(api_url + `/playlists/${playlist_id}/followers`,
@@ -306,6 +306,36 @@ class DataSource {
               resolve(true)
             } else {
               Log.error('Follow Playlist', `Unexpected response: ${data.responseCode}`);
+              reject(`Unexpected response: ${data.responseCode}`);
+            }
+          }
+          else {
+            Log.error('Follow Playlist', err.message)
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
+
+  async unfollowPlaylist(access_token: string, playlist_id: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(api_url + `/playlists/${playlist_id}/followers`,
+        {
+          method: http.RequestMethod.DELETE,
+          header: {
+            Authorization: `Bearer ${access_token}`,
+          },
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            if (data.responseCode === 200) {
+              Log.info('Unfollow Playlist', 'Successfully unfollowed playlist');
+              resolve(true)
+            } else {
+              Log.error('Unfollow Playlist', `Unexpected response: ${data.responseCode}`);
               reject(`Unexpected response: ${data.responseCode}`);
             }
           }
