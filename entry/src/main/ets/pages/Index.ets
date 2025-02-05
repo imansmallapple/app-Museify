@@ -162,6 +162,18 @@ struct Index {
     })
   }
 
+  unfollowArtistsOrUsers(authCode: string, type: string, ids: string) {
+    // Get access_token
+    this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
+      if (AccessToken !== undefined) {
+        this.access_token = AccessToken
+      }
+      // Follow Artists or Users
+      let unfollowResult: boolean = await this.source.unfollowArtistsOrUsers(this.access_token, type, ids)
+      Log.info('User Unfollowed Artists or Users', 'test temp', unfollowResult)
+    })
+  }
+
   build() {
     Row() {
       if (!this.isLogged) {
@@ -197,10 +209,11 @@ struct Index {
 
                     // this.getFollowedArtists(this.authCode)
 
-                    // Tested follow 3 artists at one time
+                    // Tested (un)follow 3 artists at one time
                     // this.followArtistsOrUsers(this.authCode, 'artist', '2CIMQHirSU0MQqyYHq0eOx,57dN52uHvrHOxijzpIgu3E,1vCWHaC5f2uS3yhpwWbIA6')
+                    // this.unfollowArtistsOrUsers(this.authCode, 'artist', '2CIMQHirSU0MQqyYHq0eOx,57dN52uHvrHOxijzpIgu3E,1vCWHaC5f2uS3yhpwWbIA6')
 
-                    
+
                   }
                 } else {
                   Log.info('auth', 'simple page jumping', event.data.getRequestUrl())
