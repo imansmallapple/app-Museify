@@ -10,6 +10,7 @@ import router from '@ohos.router'
 import { Profile } from './userProfile';
 import { TopItems } from '../model/UserTopItem';
 import { FollowedArtists } from '../model/Artist';
+import { Recommend } from './recommend';
 
 @Entry
 @Component
@@ -254,6 +255,10 @@ struct Index {
         Column() {
           // Text('Logged in!')
           // Profile({currentUser: $currentUser})
+          Recommend({
+            userTopItems: $userTopItems,
+            currentUser: $currentUser,
+          })
         }
         .width('100%')
       }
