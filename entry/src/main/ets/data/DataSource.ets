@@ -464,7 +464,6 @@ class DataSource {
           if (!err) {
             Log.info('checkIfFollowArtistsOrUsers', 'responseCode', data.responseCode);
             if (data.responseCode === 200) {
-              Log.info('checkIfFollowArtistsOrUsers', 'Successfully unfollowed Artist or User')
               let responseData: boolean[] = JSON.parse(data.result as string)
               resolve(responseData)
             } else {
@@ -474,6 +473,37 @@ class DataSource {
           }
           else {
             Log.error('checkIfFollowArtistsOrUsers', err.message)
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
+
+  async checkIfFollowPlaylist(access_token: string, playlist_id: string): Promise<boolean[]> {
+    return new Promise<boolean[]>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(api_url + `/playlists/${playlist_id}/followers/contains`,
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            Authorization: `Bearer ${access_token}`
+          },
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            Log.info('checkIfFollowPlaylist', 'responseCode', data.responseCode);
+            if (data.responseCode === 200) {
+              let responseData: boolean[] = JSON.parse(data.result as string)
+              resolve(responseData)
+            } else {
+              Log.error('checkIfFollowPlaylist', `Unexpected response: ${data.responseCode}`);
+              reject(`Unexpected response: ${data.responseCode}`);
+            }
+          }
+          else {
+            Log.error('checkIfFollowPlaylist', err.message)
             reject('Error: ' + err)
           }
         })
