@@ -40,10 +40,10 @@ export class Image {
 
 export class UserProfile {
   country: string;
-  displayName: string;
+  display_name: string;
   email: string;
-  explicitContent: ExplicitContent;
-  externalUrls: ExternalUrls;
+  explicit_content: ExplicitContent;
+  external_urls: ExternalUrls;
   followers: Followers;
   href: string;
   id: string;
@@ -67,10 +67,10 @@ export class UserProfile {
     uri: string
   ) {
     this.country = country;
-    this.displayName = displayName;
+    this.display_name = displayName;
     this.email = email;
-    this.explicitContent = explicitContent;
-    this.externalUrls = externalUrls;
+    this.explicit_content = explicitContent;
+    this.external_urls = externalUrls;
     this.followers = followers;
     this.href = href;
     this.id = id;

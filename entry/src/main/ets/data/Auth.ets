@@ -11,7 +11,7 @@ let base64 = new util.Base64Helper();
 export class SpotifyAuth {
   private clientId: string = '3b890116acda47138418a110a37334bd';
   private redirectUri: string = 'https://developer.spotify.com/'; // Replace with your redirect URI
-  private scope: string = 'user-read-private user-read-email';
+  private scope: string = 'user-read-private user-read-email user-top-read';
   private state: string = this.generateRandomState();
 
   // Function to generate a random state string
@@ -22,7 +22,8 @@ export class SpotifyAuth {
   // Function to initiate the login process
   public async login(): Promise<string> {
     const authUrl = this.buildAuthUrl()
-    // Log.info('Auth', 'Redirecting to:', authUrl)
+    Log.info('Auth', 'Redirecting to:', authUrl)
+    Log.info('Auth', 'Encode URI Component:', encodeURIComponent(this.scope))
     return authUrl
   }
 
@@ -33,9 +34,8 @@ export class SpotifyAuth {
       this.scope,
       this.redirectUri,
       this.state)
-
     // Url worked!
-    return `https://accounts.spotify.com/authorize?response_type=code&client_id=${this.clientId}&scope=user-read-private%20user-read-email&redirect_uri=${this.redirectUri}&state=${this.state}`;
+    return `https://accounts.spotify.com/authorize?response_type=code&client_id=${this.clientId}&scope=${encodeURIComponent(this.scope)}&redirect_uri=${this.redirectUri}&state=${this.state}`;
   }
 
   // Handle the callback from Spotify (exchange the code for a token)
@@ -58,7 +58,6 @@ export class SpotifyAuth {
             try {
               const response: SpotifyTokenResponse = JSON.parse(data.result as string);
               // Log.info('getAccessToken', 'Access Token:', response);
-              // console.info('getAccessToken:', response.access_token);
               resolve(response.access_token);
             } catch (error) {
               Log.error('getAccessToken', 'Failed to parse token response:', error);

@@ -8,6 +8,7 @@ import url from '@ohos.url';
 import { ExplicitContent, UserProfile, ExternalUrls, Followers } from '../model/UserProfile';
 import router from '@ohos.router'
 import { Profile } from './userProfile';
+import { TopItems } from '../model/UserTopItem';
 
 @Entry
 @Component
@@ -25,6 +26,9 @@ struct Index {
   @State currentUser: UserProfile = new UserProfile('', '', '', new ExplicitContent(false, false),
     new ExternalUrls(''), new Followers('', 0), '', '', [], '', '', '')
   @State isLogged: boolean = false
+
+  // User Top Items
+  @State userTopItems: TopItems = new TopItems('',0,'',0,'',0,[])
 
   aboutToAppear() {
     this.spotifyAuth.login().then(async (authUrl) => {
@@ -63,23 +67,33 @@ struct Index {
     }
   }
 
-  getAccessToken(authCode: string) {
-
+  getUserProfile(authCode: string) {
     // Get access_token
     this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
       if (AccessToken !== undefined) {
         this.access_token = AccessToken
       }
       Log.info('getAccessToken', this.access_token)
-
       // Get User Profile
       let res: UserProfile = await this.source.getProfile(this.access_token)
-      // Log.info('User Profile:', 'res', res)
+      Log.info('User Profile:', 'res', res)
       this.currentUser = res
-      // Log.info('User Profile:', 'currentUser', this.currentUser)
+      Log.info('User Profile:', 'currentUser', this.currentUser)
       this.isLogged = true
+    })
+  }
 
-
+  getUserTopItems(authCode: string) {
+    // Get access_token
+    this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
+      if (AccessToken !== undefined) {
+        this.access_token = AccessToken
+      }
+      // Get User Top Items
+      let userTopItems: TopItems = await this.source.getUserTopItems(this.access_token, 'artists')
+      Log.info('User Top Items', userTopItems)
+      this.userTopItems = userTopItems
+      Log.info('User Top Items','state locally', this.userTopItems)
     })
   }
 
@@ -98,14 +112,16 @@ struct Index {
             .onLoadIntercept((event) => {
               if (event) {
                 if (event.data.isRedirect()) {
-                  // todo: 设置拦截代码，拦截重定向后的登陆code和state
+                  // 设置拦截代码，拦截重定向后的登陆code和state
                   Log.info('auth', 'redirect', event.data.getRequestUrl())
                   this.authCode = this.extractAuthCode(event.data.getRequestUrl())
                   Log.info('auth', 'code res: ', this.authCode)
                   if (this.authCode !== null && this.authCode.length > 150) {
                     Log.info('User Profile', 'auth Code', this.authCode)
-                    this.getAccessToken(this.authCode)
-                    //already get access token
+
+                    // Get User Data
+                    this.getUserProfile(this.authCode)
+                    this.getUserTopItems(this.authCode)
                   }
                 } else {
                   Log.info('auth', 'simple page jumping', event.data.getRequestUrl())
