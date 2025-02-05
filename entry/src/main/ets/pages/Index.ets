@@ -174,6 +174,18 @@ struct Index {
     })
   }
 
+  checkIfFollowArtistsOrUsers(authCode: string, type: string, ids: string) {
+    // Get access_token
+    this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
+      if (AccessToken !== undefined) {
+        this.access_token = AccessToken
+      }
+      // Check Follow Artists or Users
+      let checkResult: boolean[] = await this.source.checkIfFollowArtistsOrUsers(this.access_token, type, ids)
+      Log.info('checkIfFollowArtistsOrUsers', 'test temp', checkResult)
+    })
+  }
+
   build() {
     Row() {
       if (!this.isLogged) {
@@ -213,7 +225,8 @@ struct Index {
                     // this.followArtistsOrUsers(this.authCode, 'artist', '2CIMQHirSU0MQqyYHq0eOx,57dN52uHvrHOxijzpIgu3E,1vCWHaC5f2uS3yhpwWbIA6')
                     // this.unfollowArtistsOrUsers(this.authCode, 'artist', '2CIMQHirSU0MQqyYHq0eOx,57dN52uHvrHOxijzpIgu3E,1vCWHaC5f2uS3yhpwWbIA6')
 
-
+                    // Test checking if user follow artists or users
+                    // this.checkIfFollowArtistsOrUsers(this.authCode, 'artist', '2CIMQHirSU0MQqyYHq0eOx,57dN52uHvrHOxijzpIgu3E,1vCWHaC5f2uS3yhpwWbIA6')
                   }
                 } else {
                   Log.info('auth', 'simple page jumping', event.data.getRequestUrl())
