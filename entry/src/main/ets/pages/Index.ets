@@ -9,8 +9,9 @@ import { ExplicitContent, CurrentUserProfile, ExternalUrls, Followers, PublicUse
 import router from '@ohos.router'
 import { Profile } from './userProfile';
 import { TopItems } from '../model/UserTopItem';
-import { FollowedArtists } from '../model/Artist';
+import { Cursors, FollowedArtists } from '../model/Artist';
 import { Recommend } from './recommend';
+import { RecentPlayedTracks } from '../model/Play';
 
 @Entry
 @Component
@@ -33,6 +34,8 @@ struct Index {
   // Public User Profile
   @State publicUserProfile: PublicUserProfile = new PublicUserProfile('', new ExternalUrls(''), new Followers('', 0),
     '', '', [], '')
+  // Play
+  @State recentPlayedTracks: RecentPlayedTracks = new RecentPlayedTracks('', 0, '', new Cursors('', ''), 0, [])
 
   aboutToAppear() {
     this.spotifyAuth.login().then(async (authUrl) => {
@@ -70,6 +73,8 @@ struct Index {
       return null
     }
   }
+
+  // User
 
   getUserProfile(authCode: string) {
     // Get access_token
@@ -199,6 +204,20 @@ struct Index {
     })
   }
 
+  // Play
+  getRecentPlayedTracks(authCode: string, limit?: number, after?: number, before?: number) {
+    // Get access_token
+    this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
+      if (AccessToken !== undefined) {
+        this.access_token = AccessToken
+      }
+      // Check Follow Artists or Users
+      let result: RecentPlayedTracks = await this.source.getRecentPlayedTracks(this.access_token, limit)
+      // Log.info('getRecentPlayedTracks', 'test temp', result)
+      this.recentPlayedTracks = result
+    })
+  }
+
   build() {
     Row() {
       if (!this.isLogged) {
@@ -242,6 +261,9 @@ struct Index {
                     // this.checkIfFollowArtistsOrUsers(this.authCode, 'artist', '2CIMQHirSU0MQqyYHq0eOx,57dN52uHvrHOxijzpIgu3E,1vCWHaC5f2uS3yhpwWbIA6')
 
                     // this.checkIfFollowPlaylist(this.authCode, '3cEYpjA9oz9GiPac4AsH4n')
+
+                    // Player
+                    this.getRecentPlayedTracks(this.authCode, 10)
                   }
                 } else {
                   Log.info('auth', 'simple page jumping', event.data.getRequestUrl())
@@ -258,6 +280,7 @@ struct Index {
           Recommend({
             userTopItems: $userTopItems,
             currentUser: $currentUser,
+            recentPlayedTracks: $recentPlayedTracks,
           })
         }
         .width('100%')

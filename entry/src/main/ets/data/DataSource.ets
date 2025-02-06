@@ -6,6 +6,7 @@ import { CurrentUserProfile, PublicUserProfile } from '../model/UserProfile'
 import { UserAuthorizeAccepted, UserAuthorizeDenied } from '../model/UserAuthorization';
 import { Log } from '../utils/Log';
 import { TopItems } from '../model/UserTopItem';
+import { RecentPlayedTracks } from '../model/Play';
 
 const BASE_URL = "https://accounts.spotify.com"
 let state: string = '1234567890123456';
@@ -151,6 +152,7 @@ class DataSource {
     })
   }
 
+  // User
   async getCurrentUserProfile(access_token: string): Promise<CurrentUserProfile> {
     return new Promise<CurrentUserProfile>((resolve, reject) => {
       let httpRequest = http.createHttp()
@@ -504,6 +506,38 @@ class DataSource {
           }
           else {
             Log.error('checkIfFollowPlaylist', err.message)
+            reject('Error: ' + err)
+          }
+        })
+    })
+  }
+
+  // Player
+  async getRecentPlayedTracks(access_token: string, limit?: number, after?: number, before?: number): Promise<RecentPlayedTracks> {
+    return new Promise<RecentPlayedTracks>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(api_url + `/me/player/recently-played?limit=${limit}`,
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            Authorization: `Bearer ${access_token}`
+          },
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            Log.info('getRecentPlayedTracks', 'responseCode', data.responseCode);
+            if (data.responseCode === 200) {
+              let responseData: RecentPlayedTracks = JSON.parse(data.result as string)
+              resolve(responseData)
+            } else {
+              Log.error('getRecentPlayedTracks', `Unexpected response: ${data.responseCode}`);
+              reject(`Unexpected response: ${data.responseCode}`);
+            }
+          }
+          else {
+            Log.error('getRecentPlayedTracks', err.message)
             reject('Error: ' + err)
           }
         })
