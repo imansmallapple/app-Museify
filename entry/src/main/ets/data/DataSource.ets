@@ -1,6 +1,6 @@
 import http from '@ohos.net.http';
 import { BusinessError } from '@ohos.base';
-import { Artist, FollowedArtists } from '../model/Artist';
+import { Artist, ArtistTopTracks, FollowedArtists } from '../model/Artist';
 import { Track } from '../model/Track'
 import { CurrentUserProfile, PublicUserProfile } from '../model/UserProfile'
 import { UserAuthorizeAccepted, UserAuthorizeDenied } from '../model/UserAuthorization';
@@ -542,6 +542,39 @@ class DataSource {
           }
         })
     })
+  }
+
+  // Artists
+  async getArtistTopTracks(access_token: string, id: string, market?: string): Promise<ArtistTopTracks> {
+    return new Promise<ArtistTopTracks>((resolve, reject) => {
+      let httpRequest = http.createHttp()
+      httpRequest.request(api_url + `/artists/${id}/top-tracks?market=${market}`,
+        {
+          method: http.RequestMethod.GET,
+          header: {
+            Authorization: `Bearer ${access_token}`
+          },
+          readTimeout: 30000,
+          connectTimeout: 30000,
+        },
+        (err: BusinessError, data: http.HttpResponse) => {
+          if (!err) {
+            Log.info('getArtistTopTracks', 'responseCode', data.responseCode);
+            if (data.responseCode === 200) {
+              let responseData: ArtistTopTracks = JSON.parse(data.result as string)
+              resolve(responseData)
+            } else {
+              Log.error('getArtistTopTracks', `Unexpected response: ${data.responseCode}`);
+              reject(`Unexpected response: ${data.responseCode}`);
+            }
+          }
+          else {
+            Log.error('getArtistTopTracks', err.message)
+            reject('Error: ' + err)
+          }
+        })
+    })
+
   }
 }
 

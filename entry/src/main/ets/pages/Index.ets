@@ -9,9 +9,10 @@ import { ExplicitContent, CurrentUserProfile, ExternalUrls, Followers, PublicUse
 import router from '@ohos.router'
 import { Profile } from './userProfile';
 import { TopItems } from '../model/UserTopItem';
-import { Cursors, FollowedArtists } from '../model/Artist';
+import { ArtistTopTracks, Cursors, FollowedArtists } from '../model/Artist';
 import { Recommend } from './recommend';
 import { RecentPlayedTracks } from '../model/Play';
+import { Artist, Track } from '../model/Track';
 
 @Entry
 @Component
@@ -36,6 +37,10 @@ struct Index {
     '', '', [], '')
   // Play
   @State recentPlayedTracks: RecentPlayedTracks = new RecentPlayedTracks('', 0, '', new Cursors('', ''), 0, [])
+  // Artists
+  @State firstTopTracks: ArtistTopTracks = new ArtistTopTracks([])
+  @State secondTopTracks: ArtistTopTracks = new ArtistTopTracks([])
+  private countryCode: string = 'PL'
 
   aboutToAppear() {
     this.spotifyAuth.login().then(async (authUrl) => {
@@ -102,7 +107,15 @@ struct Index {
       let userTopItems: TopItems = await this.source.getUserTopItems(this.access_token, 'artists')
       // Log.info('User Top Items', userTopItems)
       this.userTopItems = userTopItems
-      // Log.info('User Top Items', 'state locally', this.userTopItems)
+
+
+      // Artists top tracks
+      if (this.userTopItems.items[0] !== undefined) {
+        let result1: ArtistTopTracks = await this.source.getArtistTopTracks(this.access_token, this.userTopItems.items[0].id, this.countryCode)
+        let result2: ArtistTopTracks = await this.source.getArtistTopTracks(this.access_token, this.userTopItems.items[1].id, this.countryCode)
+        this.firstTopTracks = result1
+        this.secondTopTracks = result2
+      }
     })
   }
 
@@ -198,7 +211,6 @@ struct Index {
       if (AccessToken !== undefined) {
         this.access_token = AccessToken
       }
-      // Check Follow Artists or Users
       let checkResult: boolean[] = await this.source.checkIfFollowPlaylist(this.access_token, playlist_id)
       Log.info('checkIfFollowPlaylist', 'test temp', checkResult)
     })
@@ -211,12 +223,26 @@ struct Index {
       if (AccessToken !== undefined) {
         this.access_token = AccessToken
       }
-      // Check Follow Artists or Users
       let result: RecentPlayedTracks = await this.source.getRecentPlayedTracks(this.access_token, limit)
-      // Log.info('getRecentPlayedTracks', 'test temp', result)
       this.recentPlayedTracks = result
     })
   }
+
+  // Artists
+  // getArtistTopTracks(authCode: string, id: string, market?: string) {
+  //   // Get access_token
+  //   this.spotifyAuth.getAccessToken(authCode).then(async (AccessToken) => {
+  //     if (AccessToken !== undefined) {
+  //       this.access_token = AccessToken
+  //     }
+  //     // Check Follow Artists or Users
+  //     let result: ArtistTopTracks = await this.source.getArtistTopTracks(this.access_token, id, market)
+  //     Log.info('getArtistTopTracks', 'test temp', result)
+  //     // this.recentPlayedTracks = result
+  //     this.firstTopTracks = result
+  //     // Log.info('getArtistTopTracks', 'test local',  this.firstTopTracks)
+  //   })
+  // }
 
   build() {
     Row() {
@@ -264,6 +290,7 @@ struct Index {
 
                     // Player
                     this.getRecentPlayedTracks(this.authCode, 10)
+
                   }
                 } else {
                   Log.info('auth', 'simple page jumping', event.data.getRequestUrl())
@@ -281,6 +308,8 @@ struct Index {
             userTopItems: $userTopItems,
             currentUser: $currentUser,
             recentPlayedTracks: $recentPlayedTracks,
+            firstTopTracks: $firstTopTracks,
+            secondTopTracks: $secondTopTracks,
           })
         }
         .width('100%')

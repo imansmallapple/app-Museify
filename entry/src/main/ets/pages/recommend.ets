@@ -1,8 +1,9 @@
 import { TopItems } from '../model/UserTopItem'
-import { Artist, Cursors } from '../model/Artist';
+import { Artist, ArtistTopTracks, Cursors } from '../model/Artist';
 import { Track } from '../model/Track'
 import { CurrentUserProfile } from '../model/UserProfile';
 import { PlayHistory, RecentPlayedTracks } from '../model/Play';
+import { Log } from '../utils/Log';
 
 // @Entry
 @Component
@@ -10,20 +11,8 @@ export struct Recommend {
   @Link userTopItems: TopItems
   @Link currentUser: CurrentUserProfile
   @Link recentPlayedTracks: RecentPlayedTracks
-
-  // Unique album played track list
-  // @State uniquePlayedTrackHistory: PlayHistory[] = []
-
-  // aboutToAppear() {
-  //   let trackMap = new Map<string, PlayHistory>()
-  //   this.recentPlayedTracks.items.forEach((item: PlayHistory) => {
-  //     let albumName = item.track.album.name;
-  //     if (!trackMap.has(albumName)) {
-  //       trackMap.set(albumName, item)
-  //     }
-  //   })
-  //   this.uniquePlayedTrackHistory = Array.from(trackMap.values())
-  // }
+  @Link firstTopTracks: ArtistTopTracks
+  @Link secondTopTracks: ArtistTopTracks
 
   build() {
     Column() {
@@ -43,7 +32,7 @@ export struct Recommend {
       .borderColor(Color.White)
 
       Scroll() {
-        Column() {
+        Column({ space: 20 }) {
           // User Top Items
           Column() {
             Grid() {
@@ -107,11 +96,119 @@ export struct Recommend {
           }
           .alignItems(HorizontalAlign.Start)
           .width('100%')
+
+          // 1st artist fan special
+          if (this.userTopItems.items[0]) {
+            Column({ space: 10 }) {
+              // User favorite artist recommendation
+              Row({ space: 10 }) {
+                Column() {
+                  Image(`${(this.userTopItems.items[0] as Artist).images[0].url}`)
+                    .borderRadius(100)
+                }
+                .width(70)
+
+                Column() {
+                  Text('Fans Special')
+                    .fontColor(Color.White)
+                    .fontSize(20)
+                    .fontWeight(FontWeight.Medium)
+                  Text(`${this.userTopItems.items[0].name}`)
+                    .fontColor(Color.White)
+                    .fontSize(30)
+                    .fontWeight(FontWeight.Bold)
+                }
+                .width('100%')
+                .alignItems(HorizontalAlign.Start)
+                .justifyContent(FlexAlign.Center)
+                .margin({ bottom: 10 })
+              }
+
+              List() {
+                ForEach(this.firstTopTracks.tracks, (item: Track) => {
+                  ListItem() {
+                    Column({ space: 5 }) {
+                      Image(item.album.images[0].url)
+                        .width(150)
+                      Row() {
+                        Text(item.name)
+                          .fontColor(Color.White)
+                          .fontSize(15)
+                          .maxLines(2)
+                          .textOverflow({ overflow: TextOverflow.Ellipsis })
+                      }
+                      .width('100%')
+                      .justifyContent(FlexAlign.Start)
+                    }
+                    .alignItems(HorizontalAlign.Start)
+                    .width(190)
+                  }
+                })
+              }
+              .listDirection(Axis.Horizontal)
+            }
+            .alignItems(HorizontalAlign.Start)
+            .width('100%')
+          }
+
+          // 2nd artist fan special
+          if (this.userTopItems.items[1]) {
+            Column({ space: 10 }) {
+              // User favorite artist recommendation
+              Row({ space: 10 }) {
+                Column() {
+                  Image(`${(this.userTopItems.items[1] as Artist).images[0].url}`)
+                    .borderRadius(100)
+                }
+                .width(70)
+
+                Column() {
+                  Text('Fans Special')
+                    .fontColor(Color.White)
+                    .fontSize(20)
+                    .fontWeight(FontWeight.Medium)
+                  Text(`${this.userTopItems.items[1].name}`)
+                    .fontColor(Color.White)
+                    .fontSize(30)
+                    .fontWeight(FontWeight.Bold)
+                }
+                .width('100%')
+                .alignItems(HorizontalAlign.Start)
+                .justifyContent(FlexAlign.Center)
+                .margin({ bottom: 10 })
+              }
+
+              List() {
+                ForEach(this.secondTopTracks.tracks, (item: Track) => {
+                  ListItem() {
+                    Column({ space: 5 }) {
+                      Image(item.album.images[0].url)
+                        .width(150)
+                      Row() {
+                        Text(item.name)
+                          .fontColor(Color.White)
+                          .fontSize(15)
+                          .maxLines(2)
+                          .textOverflow({ overflow: TextOverflow.Ellipsis })
+                      }
+                      .width('100%')
+                      .justifyContent(FlexAlign.Start)
+                    }
+                    .alignItems(HorizontalAlign.Start)
+                    .width(190)
+                  }
+                })
+              }
+              .listDirection(Axis.Horizontal)
+            }
+            .alignItems(HorizontalAlign.Start)
+            .width('100%')
+          }
         }
         .width('100%')
       }
       .width('100%')
-      .height('100%')
+      .height('88%')
       .align(Alignment.Top)
     }
     .width('100%')

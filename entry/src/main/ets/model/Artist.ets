@@ -1,3 +1,5 @@
+import { Track } from '../model/Track'
+
 export class ExternalUrls {
   spotify: string;
 
@@ -90,5 +92,13 @@ export class Cursors {
   constructor(after: string, before: string) {
     this.after = after
     this.before = before
+  }
+}
+
+export class ArtistTopTracks {
+  tracks: Track[]
+
+  constructor(tracks: Track[]) {
+    this.tracks = tracks
   }
 }
