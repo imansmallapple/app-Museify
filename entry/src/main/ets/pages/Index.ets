@@ -7,10 +7,10 @@ import { Log } from '../utils/Log';
 import url from '@ohos.url';
 import { ExplicitContent, CurrentUserProfile, ExternalUrls, Followers, PublicUserProfile } from '../model/UserProfile';
 import router from '@ohos.router'
-import { Profile } from './userProfile';
+import { Profile } from './UserProfile';
 import { TopItems } from '../model/UserTopItem';
 import { ArtistTopTracks, Cursors, FollowedArtists } from '../model/Artist';
-import { Recommend } from './recommend';
+import { Recommend } from './Recommend';
 import { RecentPlayedTracks } from '../model/Play';
 import { Artist, Track } from '../model/Track';
 

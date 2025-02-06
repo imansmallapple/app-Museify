@@ -4,6 +4,7 @@ import { Track } from '../model/Track'
 import { CurrentUserProfile } from '../model/UserProfile';
 import { PlayHistory, RecentPlayedTracks } from '../model/Play';
 import { Log } from '../utils/Log';
+import router from '@ohos.router'
 
 // @Entry
 @Component
@@ -98,7 +99,7 @@ export struct Recommend {
           .width('100%')
 
           // 1st artist fan special
-          if (this.userTopItems.items[0]) {
+          if (this.userTopItems.items[0] !== undefined && this.userTopItems.items[0] !== null) {
             Column({ space: 10 }) {
               // User favorite artist recommendation
               Row({ space: 10 }) {
@@ -123,6 +124,14 @@ export struct Recommend {
                 .justifyContent(FlexAlign.Center)
                 .margin({ bottom: 10 })
               }
+              .onClick(() => {
+                router.pushUrl({
+                  url: 'pages/ArtistDetail',
+                  params: {
+                    artist: this.userTopItems.items[0] as Artist
+                  }
+                })
+              })
 
               List() {
                 ForEach(this.firstTopTracks.tracks, (item: Track) => {
@@ -152,7 +161,7 @@ export struct Recommend {
           }
 
           // 2nd artist fan special
-          if (this.userTopItems.items[1]) {
+          if (this.userTopItems.items[1] !== undefined && this.userTopItems.items[1] !== null) {
             Column({ space: 10 }) {
               // User favorite artist recommendation
               Row({ space: 10 }) {
@@ -177,6 +186,14 @@ export struct Recommend {
                 .justifyContent(FlexAlign.Center)
                 .margin({ bottom: 10 })
               }
+              .onClick(() => {
+                router.pushUrl({
+                  url: 'pages/ArtistDetail',
+                  params: {
+                    artist: this.userTopItems.items[1] as Artist
+                  }
+                })
+              })
 
               List() {
                 ForEach(this.secondTopTracks.tracks, (item: Track) => {
