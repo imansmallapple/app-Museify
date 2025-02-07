@@ -102,3 +102,11 @@ export class ArtistTopTracks {
     this.tracks = tracks
   }
 }
+
+export class RouterArtist {
+  artist: Artist
+
+  constructor(artist: Artist) {
+    this.artist = artist
+  }
+}

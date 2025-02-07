@@ -128,7 +128,7 @@ export struct Recommend {
                 router.pushUrl({
                   url: 'pages/ArtistDetail',
                   params: {
-                    artist: this.userTopItems.items[0] as Artist
+                    artist: this.userTopItems.items[0]
                   }
                 })
               })
@@ -190,7 +190,7 @@ export struct Recommend {
                 router.pushUrl({
                   url: 'pages/ArtistDetail',
                   params: {
-                    artist: this.userTopItems.items[1] as Artist
+                    artist: this.userTopItems.items[1]
                   }
                 })
               })
